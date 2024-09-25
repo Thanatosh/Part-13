@@ -13,17 +13,13 @@ router.post('/', async (req, res) => {
     return res.status(400).json({ error: 'Title and URL are required' })
   }
 
-  try {
-    const newBlog = await Blog.create({
-      title,
-      author,
-      url,
-      likes: likes || 0
-    })
-    res.status(201).json(newBlog)
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to create blog' })
-  }
+  const newBlog = await Blog.create({
+    title,
+    author,
+    url,
+    likes: likes || 0
+  })
+  res.status(201).json(newBlog)
 });
 
 router.delete('/:id', async (req, res) => {
@@ -38,18 +34,16 @@ router.delete('/:id', async (req, res) => {
 });
 
 router.put('/:id', async (req, res) => {
-  const blog = await Blog.findByPk(req.params.id)
+  const blog = await Blog.findByPk(req.params.id);
 
   if (blog) {
     const { likes } = req.body
-    if (typeof likes !== 'undefined') {
-      blog.likes = likes
-    }
-    await blog.save()
-    res.json(blog)
+    blog.likes = typeof likes !== 'undefined' ? likes : blog.likes;
+    await blog.save();
+    res.json(blog);
   } else {
     res.status(404).json({ error: 'Blog not found' })
   }
 });
 
-module.exports = router
+module.exports = router;
