@@ -1,5 +1,4 @@
 const router = require('express').Router();
-
 const { User } = require('../models');
 
 router.get('/', async (req, res) => {
@@ -8,23 +7,15 @@ router.get('/', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
-  const { username, name } = req.body;
-
-  if (!username || !name) {
-    return res.status(400).json({ error: 'Username and name are required' });
-  }
-
   try {
-    const user = await User.create({ username, name });
-    res.status(201).json(user);
+    const user = await User.create(req.body);
+    console.log('User created:', user);
+    res.json(user);
   } catch (error) {
-    if (error.name === 'SequelizeUniqueConstraintError') {
-      return res.status(400).json({ error: 'Username must be unique' });
-    }
-    return res.status(500).json({ error: 'An error occurred' });
+    console.log('Validation error:', error);
+    return res.status(400).json({ error: error.message });
   }
 });
-
 
 router.get('/:id', async (req, res) => {
   const user = await User.findByPk(req.params.id)
@@ -57,6 +48,5 @@ router.put('/:username', async (req, res) => {
     res.status(500).json({ error: 'An error occurred while updating user' });
   }
 });
-
 
 module.exports = router;
