@@ -27,6 +27,8 @@ router.post('/', async (request, response) => {
 
   const token = jwt.sign(userForToken, SECRET);
 
+  console.log("Generated JWT Token:", token);
+
   response.status(200).send({
     token,
     username: user.username,
