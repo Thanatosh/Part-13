@@ -3,7 +3,10 @@ const { User, Blog } = require('../models');
 
 router.get('/', async (req, res) => {
   const users = await User.findAll({
-    include: Blog
+    include: {
+      model: Blog,
+      attributes: ['id', 'title', 'author', 'url', 'likes']
+    },
   });
   res.json(users)
 });
@@ -20,7 +23,13 @@ router.post('/', async (req, res) => {
 });
 
 router.get('/:id', async (req, res) => {
-  const user = await User.findByPk(req.params.id)
+  const user = await User.findByPk(req.params.id, {
+    include: {
+      model: Blog,
+      attributes: ['id', 'title', 'author', 'url', 'likes'],
+    },
+  });
+
   if (user) {
     res.json(user)
   } else {
