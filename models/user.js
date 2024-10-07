@@ -20,9 +20,8 @@ const User = sequelize.define('user', {
     allowNull: false
   },
 }, {
-  sequelize,
   underscored: true,
-  modelName: 'user'
+  timestamps: true,
 });
 
 module.exports = User;
