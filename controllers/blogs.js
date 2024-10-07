@@ -37,7 +37,7 @@ router.get('/', async (req, res) => {
 });
 
 router.post('/', tokenExtractor, async (req, res) => {
-  const { title, author, url, likes } = req.body
+  const { title, author, url, likes, year } = req.body
 
   if (!title || !url) {
     return res.status(400).json({ error: 'Title and URL are required' })
@@ -50,6 +50,7 @@ router.post('/', tokenExtractor, async (req, res) => {
       author,
       url,
       likes: likes || 0,
+      year,
       userId: user.id
     })
     res.status(201).json(newBlog)

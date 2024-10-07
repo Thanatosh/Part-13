@@ -53,6 +53,10 @@ module.exports = {
         type: DataTypes.INTEGER,
         defaultValue: 0
       },
+      year: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
       user_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
