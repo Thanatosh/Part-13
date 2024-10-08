@@ -2,10 +2,10 @@ const axios = require('axios');
 
 const testPostBlog = async () => {
   const testData = {
-    title: "Test Blog",
-    author: "Test Author",
+    title: "Third Encounter",
+    author: "Malenia",
     url: "http://test.com",
-    year: 2040,
+    year: 1998,
   };
 
   const token = '';
