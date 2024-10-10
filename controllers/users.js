@@ -30,23 +30,37 @@ router.get('/:id', async (req, res) => {
       include: {
         model: Blog,
         as: 'readingBlogs',
+        attributes: ['id', 'author', 'url', 'title', 'likes', 'year'],
         through: {
-          attributes: [],
-        },
-        attributes: ['id', 'author', 'url', 'title', 'likes', 'year']
+          attributes: ['id', 'read'],
+        }
       },
     });
 
     if (user) {
+      const formattedReadings = user.readingBlogs.map(blog => ({
+        id: blog.id,
+        url: blog.url,
+        title: blog.title,
+        author: blog.author,
+        likes: blog.likes,
+        year: blog.year,
+        readinglists: blog.reading_list ? [{
+          read: blog.reading_list.read,
+          id: blog.reading_list.id
+        }] : []
+      }));
+
       res.json({
         name: user.name,
         username: user.username,
-        readings: user.readingBlogs,
+        readings: formattedReadings,
       });
     } else {
       res.status(404).json({ error: 'User not found' });
     }
   } catch (error) {
+    console.error('Error fetching user:', error);
     res.status(500).json({ error: 'Something went wrong' });
   }
 });
