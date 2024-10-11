@@ -2,10 +2,10 @@ const axios = require('axios');
 
 const testPostBlog = async () => {
   const testData = {
-    title: "Fourth Wall",
-    author: "Radan",
+    title: "Fifth Creation",
+    author: "Ofnir",
     url: "http://test.com",
-    year: 2018,
+    year: 2019,
   };
 
   const token = '';

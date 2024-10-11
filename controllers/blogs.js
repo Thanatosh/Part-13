@@ -1,23 +1,7 @@
 const router = require('express').Router();
-const jwt = require('jsonwebtoken');
 const { Blog, User } = require('../models');
-const { SECRET } = require('../util/config');
+const { tokenExtractor, userExtractor } = require('../utils/middleware');
 const { Op } = require('sequelize');
-
-const tokenExtractor = (req, res, next) => {
-  const authorization = req.get('authorization')
-  if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
-    try {
-      req.decodedToken = jwt.verify(authorization.substring(7), SECRET)
-    } catch (error){
-      console.log(error)
-      return res.status(401).json({ error: 'token invalid' })
-    }
-  } else {
-    return res.status(401).json({ error: 'token missing' })
-  }
-  next()
-};
 
 router.get('/', async (req, res) => {
   const blogs = await Blog.findAll({
@@ -36,7 +20,7 @@ router.get('/', async (req, res) => {
   res.json(blogs)
 });
 
-router.post('/', tokenExtractor, async (req, res) => {
+router.post('/', tokenExtractor, userExtractor, async (req, res) => {
   const { title, author, url, likes, year } = req.body
 
   if (!title || !url) {
@@ -44,14 +28,13 @@ router.post('/', tokenExtractor, async (req, res) => {
   }
 
   try {
-    const user = await User.findByPk(req.decodedToken.id)
     const newBlog = await Blog.create({
       title,
       author,
       url,
       likes: likes || 0,
       year,
-      userId: user.id
+      userId: req.user.id
     })
     res.status(201).json(newBlog)
   } catch(error) {
@@ -59,7 +42,7 @@ router.post('/', tokenExtractor, async (req, res) => {
   }
 });
 
-router.delete('/:id', tokenExtractor, async (req, res) => {
+router.delete('/:id', tokenExtractor, userExtractor, async (req, res) => {
   try {
     const blog = await Blog.findByPk(req.params.id);
 
@@ -67,7 +50,7 @@ router.delete('/:id', tokenExtractor, async (req, res) => {
       return res.status(404).json({ error: 'Blog not found' });
     }
 
-    if (blog.userId !== req.decodedToken.id) {
+    if (blog.userId !== req.user.id) {
       return res.status(403).json({ error: 'You are not authorized to delete this blog' });
     }
 
