@@ -19,6 +19,10 @@ const User = sequelize.define('user', {
     type: DataTypes.STRING,
     allowNull: false
   },
+  disabled: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+  },
 }, {
   underscored: true,
   timestamps: true,

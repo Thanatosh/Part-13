@@ -16,24 +16,16 @@ const login = async () => {
   }
 };
 
-const createBlog = async (token) => {
-  const blogData = {
-    title: "Blogi",
-    author: "Author III",
-    url: "https://example.com/blog",
-    likes: 0,
-    year: 2015,
-  };
-
+const logout = async (token) => {
   try {
-    const response = await axios.post('http://localhost:3001/api/blogs', blogData, {
+    const response = await axios.delete('http://localhost:3001/api/logout', {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log("Blog created successfully:", response.data);
+    console.log("Logout response:", response.data);
   } catch (error) {
-    console.error("Error creating blog:", error.response?.data || error.message);
+    console.error("Logout error:", error.response?.data || error.message);
   }
 };
 
@@ -41,10 +33,10 @@ const main = async () => {
   try {
     const token = await login();
     if (token) {
-      await createBlog(token);
+      await logout(token);
     }
   } catch (error) {
-    console.error("An error occurred during the blog creation process:", error.message);
+    console.error("An error occurred:", error.message);
   }
 };
 
